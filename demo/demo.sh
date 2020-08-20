@@ -9,37 +9,33 @@ clear
 
 DEMO_PROMPT="${GREEN}➜ ${GREEN}\W "
 
-TYPE_SPEED=20
+TYPE_SPEED=35
 
-pe "ssh-keygen -t rsa -b 4096 -C 'jonahjones094@gmail.com' -f ~/.ssh/gitopsworkshop_rsa"
+# p "ssh-keygen -t rsa -b 4096 -C 'jonahjones094@gmail.com' -f ~/.ssh/gitopsworkshop_rsa"
 
-pe "eval $(ssh-agent -s)"
+# pe "cat ~/.ssh/gitopsworkshop_rsa"
 
-p "cat ~/.ssh/gitopsworkshop_rsa"
+# wait
 
-wait
+# pe "kubectl create ns flux"
 
-pe "kubectl create ns flux"
+# pe "helm repo add fluxcd https://charts.fluxcd.io"
 
-pe "helm repo add fluxcd https://charts.fluxcd.io"
+# pe "helm upgrade -i flux fluxcd/flux --wait --namespace flux --set git.url=git@github.com:jonahjon/gitopsworkshop.git --set git.pollInterval=1m"
 
-pe "helm upgrade -i flux fluxcd/flux --wait --namespace flux --set git.url=git@github.com:jonahjon/gitopsworkshop.git --set git.pollInterval=1m"
+# p "kubectl -n flux logs deployment/flux | grep identity.pub | cut -d '' -f2"
 
-p kubectl -n flux logs deployment/flux | grep identity.pub | cut -d '"' -f2
+# wait
 
-wait
+# pe "kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml"
 
-pe "kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml"
+# pe "helm upgrade -i helm-operator fluxcd/helm-operator --wait --namespace flux --set git.ssh.secretName=flux-git-deploy --set helm.versions=v3"
 
-pe "helm upgrade -i helm-operator fluxcd/helm-operator --wait --namespace flux --set git.ssh.secretName=flux-git-deploy --set helm.versions=v3"
+# pe "kubectl get pods -n flux"
 
-pe "kubectl get pods -n flux"
+# TYPE_SPEED=30
 
-cmd
-
-TYPE_SPEED=30
-
-pe "mkdir namespaces"
+# pe "mkdir namespaces"
 
 pe "cat << EOF > namespaces/appmesh-system.yaml
 ---
@@ -51,7 +47,8 @@ metadata:
   name: appmesh-system
 EOF
 "
-pe "kubectl apply -f appmesh-system.yaml"
+
+pe "kubectl apply -f namespaces/appmesh-system.yaml"
 
 pe "kubectl get ns"
 
@@ -62,6 +59,8 @@ pe "curl https://raw.githubusercontent.com/aws/eks-charts/v0.0.19/stable/appmesh
 pe "tree"
 
 pe "kubectl get crds"
+
+TYPE_SPEED=50
 
 pe "cat << EOF > appmesh-system/appmesh-controller.yaml
 ---
@@ -78,7 +77,7 @@ spec:
     version: 0.6.1
 EOF
 "
-TYPE_SPEED=20
+TYPE_SPEED=30
 
 pe "git add -A"
 
@@ -87,6 +86,8 @@ pe 'git commit -m "adding in appmesh controller"'
 pe "git push"
 
 pe "kubectl get pods -n appmesh-system"
+
+TYPE_SPEED=50
 
 pe "cat << EOF > appmesh-system/appmesh-injector.yaml
 ---
@@ -107,6 +108,9 @@ spec:
       name: apps
 EOF
 "
+
+TYPE_SPEED=30
+
 pe "git add -A"
 
 pe 'git commit -m "adding in appmesh injector"'
@@ -116,6 +120,8 @@ pe "git push"
 pe "tree"
 
 pe "kubectl get pods -n appmesh-system"
+
+TYPE_SPEED=50
 
 pe "cat << EOF > appmesh-system/appmesh-prometheus.yaml
 ---
@@ -132,6 +138,8 @@ spec:
     version: 0.3.0
 EOF
 "
+
+TYPE_SPEED=30
 
 pe "git add -A"
 
@@ -184,6 +192,8 @@ pe "kubectl get pods -n amazon-cloudwatch"
 
 wait
 
+TYPE_SPEED=50
+
 pe "cat << EOF > namespaces/apps.yaml
 ---
 apiVersion: v1
@@ -195,6 +205,8 @@ metadata:
   name: apps
 EOF
 "
+
+TYPE_SPEED=30
 
 pe "git add -A"
 
@@ -233,6 +245,8 @@ pe "export FRONTEND_NAME=$(kubectl get pods -n apps -l app=frontend-podinfo -o j
 # while true; do curl backend-podinfo.apps.svc.cluster.local:9898; echo; sleep .5; done
 cmd 
 
+TYPE_SPEED=50
+
 pe "cat << EOF > apps/3-podinfo-virtual-services.yaml
 apiVersion: appmesh.k8s.aws/v1beta1
 kind: VirtualService
@@ -254,6 +268,8 @@ spec:
               weight: 100
 EOF
 "
+
+TYPE_SPEED=30
 
 pe "git add -A"
 
