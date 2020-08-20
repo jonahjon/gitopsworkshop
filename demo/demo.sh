@@ -37,148 +37,135 @@ TYPE_SPEED=35
 
 # pe "mkdir namespaces"
 
-pe "cat << EOF > namespaces/appmesh-system.yaml
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    name: appmesh-system
-  name: appmesh-system
-EOF
-"
+# pe "cat << EOF > namespaces/appmesh-system.yaml
+# ---
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   labels:
+#     name: appmesh-system
+#   name: appmesh-system
+# EOF
+# "
 
-pe "kubectl apply -f namespaces/appmesh-system.yaml"
+# pe "kubectl apply -f namespaces/appmesh-system.yaml"
 
-pe "kubectl get ns"
+# pe "kubectl get ns"
 
-pe "mkdir appmesh-system"
+# pe "mkdir appmesh-system"
 
-pe "curl https://raw.githubusercontent.com/aws/eks-charts/v0.0.19/stable/appmesh-controller/crds/crds.yaml -o appmesh-system/crds.yaml"
+# pe "curl https://raw.githubusercontent.com/aws/eks-charts/v0.0.19/stable/appmesh-controller/crds/crds.yaml -o appmesh-system/crds.yaml"
 
-pe "tree"
+# pe "tree"
 
-pe "kubectl get crds"
+# pe "kubectl get crds"
 
-TYPE_SPEED=50
+# TYPE_SPEED=50
 
-pe "cat << EOF > appmesh-system/appmesh-controller.yaml
----
-apiVersion: helm.fluxcd.io/v1
-kind: HelmRelease
-metadata:
-  name: appmesh-controller
-  namespace: appmesh-system
-spec:
-  releaseName: appmesh-controller
-  chart:
-    repository: https://aws.github.io/eks-charts/
-    name: appmesh-controller
-    version: 0.6.1
-EOF
-"
-TYPE_SPEED=30
+# pe "cat << EOF > appmesh-system/appmesh-controller.yaml
+# ---
+# apiVersion: helm.fluxcd.io/v1
+# kind: HelmRelease
+# metadata:
+#   name: appmesh-controller
+#   namespace: appmesh-system
+# spec:
+#   releaseName: appmesh-controller
+#   chart:
+#     repository: https://aws.github.io/eks-charts/
+#     name: appmesh-controller
+#     version: 0.6.1
+# EOF
+# "
+# pe "git add -A"
 
-pe "git add -A"
+# pe 'git commit -m "adding in appmesh controller"'
 
-pe 'git commit -m "adding in appmesh controller"'
+# pe "git push"
 
-pe "git push"
+# pe "kubectl get pods -n appmesh-system"
 
-pe "kubectl get pods -n appmesh-system"
+# TYPE_SPEED=50
 
-TYPE_SPEED=50
+# pe "cat << EOF > appmesh-system/appmesh-injector.yaml
+# ---
+# apiVersion: helm.fluxcd.io/v1
+# kind: HelmRelease
+# metadata:
+#   name: appmesh-inject
+#   namespace: appmesh-system
+# spec:
+#   releaseName: appmesh-inject
+#   chart:
+#     repository: https://aws.github.io/eks-charts/
+#     name: appmesh-inject
+#     version: 0.9.0
+#   values:
+#     mesh:
+#       create: true
+#       name: apps
+# EOF
+# "
 
-pe "cat << EOF > appmesh-system/appmesh-injector.yaml
----
-apiVersion: helm.fluxcd.io/v1
-kind: HelmRelease
-metadata:
-  name: appmesh-inject
-  namespace: appmesh-system
-spec:
-  releaseName: appmesh-inject
-  chart:
-    repository: https://aws.github.io/eks-charts/
-    name: appmesh-inject
-    version: 0.9.0
-  values:
-    mesh:
-      create: true
-      name: apps
-EOF
-"
+# pe "cat << EOF > appmesh-system/appmesh-prometheus.yaml
+# ---
+# apiVersion: helm.fluxcd.io/v1
+# kind: HelmRelease
+# metadata:
+#   name: appmesh-prometheus
+#   namespace: appmesh-system
+# spec:
+#   releaseName: appmesh-prometheus
+#   chart:
+#     repository: https://aws.github.io/eks-charts/
+#     name: appmesh-prometheus
+#     version: 0.3.0
+# EOF
+# "
+# pe "tree"
 
-TYPE_SPEED=30
+# TYPE_SPEED=30
 
-pe "git add -A"
+# pe "git add -A"
 
-pe 'git commit -m "adding in appmesh injector"'
+# pe 'git commit -m "adding in appmesh prometheus"'
 
-pe "git push"
+# pe "git push"
 
-pe "tree"
+# wait
 
-pe "kubectl get pods -n appmesh-system"
+# pe "kubectl get pods -n appmesh-system"
 
-TYPE_SPEED=50
+# pe "aws appmesh list-meshes"
 
-pe "cat << EOF > appmesh-system/appmesh-prometheus.yaml
----
-apiVersion: helm.fluxcd.io/v1
-kind: HelmRelease
-metadata:
-  name: appmesh-prometheus
-  namespace: appmesh-system
-spec:
-  releaseName: appmesh-prometheus
-  chart:
-    repository: https://aws.github.io/eks-charts/
-    name: appmesh-prometheus
-    version: 0.3.0
-EOF
-"
+# pe "kubectl get meshes -A"
 
-TYPE_SPEED=30
+# pe "cat << EOF > namespaces/amazon-cloudwatch.yaml
+# ---
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   labels:
+#     name: amazon-cloudwatch
+#   name: amazon-cloudwatch
+# EOF
+# "
 
-pe "git add -A"
+# pe "git add -A"
 
-pe 'git commit -m "adding in appmesh prometheus"'
+# pe 'git commit -m "adding in container insights namespace"'
 
-pe "git push"
+# pe "git push"
 
-pe "kubectl get pods -n appmesh-system"
+# pe "kubectl get ns"
 
-pe "aws appmesh list-meshes"
+# pe "mkdir amazon-cloudwatch"
 
-pe "kubectl get meshes -A"
+# pe 'curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluentd-quickstart.yaml | sed "s/{{cluster_name}}/gitopsworkshop/;s/{{region_name}}/us-west-2/" > amazon-cloudwatch/cwagent-fluentd-quickstart.yaml'
 
-pe "cat << EOF > namespaces/amazon-cloudwatch.yaml
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    name: amazon-cloudwatch
-  name: amazon-cloudwatch
-EOF
-"
+# pe 'curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/prometheus-beta/k8s-deployment-manifest-templates/deployment-mode/service/cwagent-prometheus/prometheus-eks.yaml > amazon-cloudwatch/cwagent-prometheus-eks.yaml'
 
-pe "git add -A"
-
-pe 'git commit -m "adding in container insights namespace"'
-
-pe "git push"
-
-pe "kubectl get ns"
-
-pe "mkdir amazon-cloudwatch"
-
-pe 'curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluentd-quickstart.yaml | sed "s/{{cluster_name}}/gitopsworkshop/;s/{{region_name}}/us-west-2/" > amazon-cloudwatch/cwagent-fluentd-quickstart.yaml'
-
-pe 'curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/prometheus-beta/k8s-deployment-manifest-templates/deployment-mode/service/cwagent-prometheus/prometheus-eks.yaml > amazon-cloudwatch/cwagent-prometheus-eks.yaml'
-
-pe 'echo "edit out namespace from curl content"'
+# pe 'echo "edit out namespace from curl content"'
 
 wait
 
