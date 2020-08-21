@@ -15,6 +15,4 @@ spec:
         action:
           weightedTargets:
             - virtualNodeName: backend-podinfo-v2
-              weight: 50
-            - virtualNodeName: backend-podinfo-v1
-              weight: 50
+              weight: 100
